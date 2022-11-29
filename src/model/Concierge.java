@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Concierge implements Runnable {
+public class Concierge {
 
     public static void main(String[] args) {
         new Thread(new DiscoveryThread()).start();
@@ -19,25 +19,18 @@ public class Concierge implements Runnable {
         //writing1 = false;
     }
 
-    @Override
-    public void run() {
+    public void hostChat() {
         try (
                 ServerSocket serverSocket = new ServerSocket(8887);
                 ServerSocket serverSocket2 = new ServerSocket(8889);
                 Socket clientSocket = serverSocket.accept();
                 Socket clientSocket2 = serverSocket2.accept();
 
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-                BufferedReader stdIn =
-                        new BufferedReader(
-                                new InputStreamReader(System.in));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 PrintWriter out2 = new PrintWriter(clientSocket2.getOutputStream(), true);
-                BufferedReader in2 = new BufferedReader(
-                        new InputStreamReader(clientSocket2.getInputStream()));
+                BufferedReader in2 = new BufferedReader(new InputStreamReader(clientSocket2.getInputStream()))
         ) {
 
             String inputLine;

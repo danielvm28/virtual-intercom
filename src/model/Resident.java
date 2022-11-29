@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Resident implements Runnable {
+public class Resident {
     private boolean writing;
     private String name;
     private int port;
@@ -18,6 +18,30 @@ public class Resident implements Runnable {
         this.port = port;
         this.writing = writing;
         this.name = name;
+    }
+
+    public boolean isWriting() {
+        return writing;
+    }
+
+    public void setWriting(boolean writing) {
+        this.writing = writing;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public void connectWithConcierge() {
@@ -89,19 +113,13 @@ public class Resident implements Runnable {
 
     }
 
-    @Override
-    public void run() {
+    public void startChat() {
         IntercomSystem intercomSystem = IntercomSystem.getInstance();
         try (
                 Socket echoSocket = new Socket(intercomSystem.getServerIP(), port);
-                PrintWriter out =
-                        new PrintWriter(echoSocket.getOutputStream(), true);
-                BufferedReader in =
-                        new BufferedReader(
-                                new InputStreamReader(echoSocket.getInputStream()));
-                BufferedReader stdIn =
-                        new BufferedReader(
-                                new InputStreamReader(System.in))
+                PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
             String userInput;
             String inputLine;
