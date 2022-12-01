@@ -9,20 +9,16 @@ import java.net.Socket;
 
 public class Concierge {
 
-    public static void main(String[] args) {
-        new Thread(new DiscoveryThread()).start();
-    }
-
-    private boolean writing1 = false;
+    private boolean writing1;
 
     public Concierge() {
-        //writing1 = false;
+        writing1 = false;
     }
 
     public void hostChat() {
         try (
-                ServerSocket serverSocket = new ServerSocket(8887);
-                ServerSocket serverSocket2 = new ServerSocket(8889);
+                ServerSocket serverSocket = new ServerSocket(8880);
+                ServerSocket serverSocket2 = new ServerSocket(8881);
                 Socket clientSocket = serverSocket.accept();
                 Socket clientSocket2 = serverSocket2.accept();
 
@@ -42,7 +38,7 @@ public class Concierge {
                     inputLine = in.readLine();
 
                     // Closes the chat if both parts agree
-                    if (inputLine.equalsIgnoreCase("close")) {
+                    if (inputLine != null && inputLine.equalsIgnoreCase("close")) {
                         closeChat1 = true;
                         if (closeChat2) {
                             break;
@@ -54,7 +50,7 @@ public class Concierge {
                     inputLine = in2.readLine();
 
                     // Closes the chat if both parts agree
-                    if (inputLine.equalsIgnoreCase("close")) {
+                    if (inputLine != null && inputLine.equalsIgnoreCase("close")) {
                         closeChat2 = true;
                         if (closeChat1) {
                             break;
@@ -68,5 +64,9 @@ public class Concierge {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void sendVisitAlert() {
+
     }
 }

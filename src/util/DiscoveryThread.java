@@ -1,4 +1,4 @@
-package model;
+package util;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -7,6 +7,9 @@ import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Code adapted from <a href="https://michieldemey.be/blog/network-discovery-using-udp-broadcast/"> "Michel De Mey" </a> website
+ */
 public class DiscoveryThread implements Runnable {
     public static DiscoveryThread instance;
 

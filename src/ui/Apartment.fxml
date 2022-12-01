@@ -6,13 +6,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button fx:id="buttonPanico" layoutX="469.0" layoutY="342.0" mnemonicParsing="false" onAction="#panico" prefHeight="26.0" prefWidth="94.0" style="-fx-background-color: #ff0000};" text="Panico" textFill="WHITE" />
       <TextField fx:id="textFieldMensajeEnviar" layoutX="144.0" layoutY="342.0" />
       <TextArea fx:id="textAreaChat" layoutX="144.0" layoutY="39.0" prefHeight="296.0" prefWidth="420.0" />
       <Button fx:id="buttonEnviar" layoutX="300.0" layoutY="342.0" mnemonicParsing="false" onAction="#enviarMensaje" style="-fx-background-color: #5373FC;" text="Enviar" textFill="WHITE" />
-      <Button layoutX="25.0" layoutY="39.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="94.0" style="-fx-background-color: #5373FC;" text="A01" textFill="#f4f4f4" />
+      <Button fx:id="buttonAPT" layoutX="25.0" layoutY="39.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="94.0" style="-fx-background-color: #5373FC;" text="A01" textFill="#f4f4f4" />
       <Label layoutX="197.0" layoutY="14.0" text="Es su turno de: " />
       <Label fx:id="labelTurno" layoutX="280.0" layoutY="14.0" text="Escribir" />
    </children>

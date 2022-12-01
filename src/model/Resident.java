@@ -13,8 +13,13 @@ public class Resident {
     private boolean writing;
     private String name;
     private int port;
+    private String emergencyContact;
+    private IntercomSystem intercomSystem;
+    private Socket echoSocket;
+    private PrintWriter out;
+    private BufferedReader in;
 
-    public Resident(boolean writing, String name, int port) {
+    public Resident(boolean writing, String name, int port)  {
         this.port = port;
         this.writing = writing;
         this.name = name;
@@ -44,7 +49,26 @@ public class Resident {
         this.port = port;
     }
 
+    public String getEmergencyContact() {
+        return emergencyContact;
+    }
+
+    public void setEmergencyContact(String emergencyContact) {
+        this.emergencyContact = emergencyContact;
+    }
+
     public void connectWithConcierge() {
+
+        intercomSystem = IntercomSystem.getInstance();
+
+        try {
+            echoSocket = new Socket(intercomSystem.getServerIP(), port);
+            out = new PrintWriter(echoSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         // Find the server using UDP broadcast
         try {
             //Open a random port to send the package
@@ -113,32 +137,21 @@ public class Resident {
 
     }
 
-    public void startChat() {
-        IntercomSystem intercomSystem = IntercomSystem.getInstance();
-        try (
-                Socket echoSocket = new Socket(intercomSystem.getServerIP(), port);
-                PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
-        ) {
-            String userInput;
+    public void awaitResponse() {
+        try {
             String inputLine;
+            inputLine = in.readLine();
+            IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
+            writing = true;
 
-            while (true) {
-                if (writing) {
-                    System.out.println("Escribir " + name);
-                    userInput = stdIn.readLine();
-                    out.println(userInput);
-                    writing = false;
-                } else {
-                    System.out.println("Leer " + name);
-                    inputLine = in.readLine();
-                    System.out.println(inputLine);
-                    writing = true;
-                }
-            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public void sendText(String text) {
+        out.println(name + ": " + text);
+        writing = false;
     }
 }

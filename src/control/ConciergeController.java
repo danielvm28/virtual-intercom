@@ -6,10 +6,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import model.Concierge;
+import util.DiscoveryThread;
 
 import java.util.Optional;
 
-public class AdminController {
+public class ConciergeController {
 
     @FXML
     private Button buttonA01;
@@ -21,6 +23,14 @@ public class AdminController {
     private TextField textFieldNombreVisitante;
 
     private Button button;
+
+    private Concierge concierge;
+
+    public ConciergeController(Concierge concierge) {
+        this.concierge = concierge;
+        new Thread(new DiscoveryThread()).start();
+        new Thread(concierge::hostChat).start();
+    }
 
     @FXML
     void alert(ActionEvent event) {

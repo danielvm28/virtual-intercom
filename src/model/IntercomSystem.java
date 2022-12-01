@@ -1,5 +1,9 @@
 package model;
 
+import util.EmailSenderService;
+
+import javax.mail.MessagingException;
+
 public class IntercomSystem {
     private String serverIP;
     private static IntercomSystem instance;
@@ -7,12 +11,11 @@ public class IntercomSystem {
     private Resident resident2;
     private Concierge concierge;
 
-    private String chat;
-    private String newMessage;
+    public static String chat = "";
 
     private IntercomSystem() {
-        resident1 = new Resident(false, "A01", 8887);
-        resident2 = new Resident(true, "A02", 8889);
+        resident1 = new Resident(false, "A01", 8880);
+        resident2 = new Resident(true, "A02", 8881);
         concierge = new Concierge();
     }
 
@@ -33,26 +36,37 @@ public class IntercomSystem {
         System.out.println(serverIP);
     }
 
-    public String getChat() {
-        return chat;
+    public Resident getResident1() {
+        return resident1;
     }
 
-    public void setChat(String chat) {
-        this.chat = chat;
+    public void setResident1(Resident resident1) {
+        this.resident1 = resident1;
     }
 
-    public String getNewMessage() {
-        return newMessage;
+    public Resident getResident2() {
+        return resident2;
     }
 
-    public void setNewMessage(String newMessage) {
-        this.newMessage = newMessage;
-        chat += "\n " + newMessage;
+    public void setResident2(Resident resident2) {
+        this.resident2 = resident2;
     }
 
-    public void startChat() {
-        resident1.connectWithConcierge();
-        new Thread(() -> concierge.hostChat()).start();
-        new Thread(() -> resident1.startChat()).start();
+    public Concierge getConcierge() {
+        return concierge;
+    }
+
+    public void setConcierge(Concierge concierge) {
+        this.concierge = concierge;
+    }
+
+    public void sendText(String text, Resident r) {
+        r.sendText(text);
+        chat = chat + "\n" + r.getName() + ": " + text;
+    }
+
+    public void sendEmergencyEmail(String name, String contact) throws MessagingException {
+        EmailSenderService emailSenderService = new EmailSenderService();
+        emailSenderService.sendEmail("EMERGENCIA", "Ha ocurrido una emergencia en el apartamento " + name + ". \nY usted aparece como contacto de emergencia", contact);
     }
 }
