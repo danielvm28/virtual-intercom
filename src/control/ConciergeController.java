@@ -29,7 +29,8 @@ public class ConciergeController {
     public ConciergeController(Concierge concierge) {
         this.concierge = concierge;
         new Thread(new DiscoveryThread()).start();
-        new Thread(concierge::hostChat).start();
+        //new Thread(concierge::hostChat).start();
+        new Thread(concierge::ini).start();
     }
 
     @FXML

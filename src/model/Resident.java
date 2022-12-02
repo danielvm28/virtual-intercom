@@ -10,28 +10,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Resident {
-    private boolean writing;
     private String name;
-    private int port;
+    private int portSend;
+    private int portReceive;
     private String emergencyContact;
     private IntercomSystem intercomSystem;
     private Socket echoSocket;
+    private Socket receptionSocket;
     private PrintWriter out;
     private BufferedReader in;
 
-    public Resident(boolean writing, String name, int port)  {
-        this.port = port;
-        this.writing = writing;
+    public Resident(String name, int portSend, int portReceive)  {
+        this.portSend = portSend;
+        this.portReceive = portReceive;
         this.name = name;
         emergencyContact = "";
-    }
-
-    public boolean isWriting() {
-        return writing;
-    }
-
-    public void setWriting(boolean writing) {
-        this.writing = writing;
     }
 
     public String getName() {
@@ -42,12 +35,12 @@ public class Resident {
         this.name = name;
     }
 
-    public int getPort() {
-        return port;
+    public int getPortSend() {
+        return portSend;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setPortSend(int portSend) {
+        this.portSend = portSend;
     }
 
     public String getEmergencyContact() {
@@ -127,9 +120,10 @@ public class Resident {
             intercomSystem = IntercomSystem.getInstance();
 
             try {
-                echoSocket = new Socket(intercomSystem.getServerIP(), port);
+                echoSocket = new Socket(intercomSystem.getServerIP(), portSend);
+                receptionSocket = new Socket(intercomSystem.getServerIP(), portReceive);
                 out = new PrintWriter(echoSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+                in = new BufferedReader(new InputStreamReader(receptionSocket.getInputStream()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -144,17 +138,31 @@ public class Resident {
         try {
             String inputLine;
             inputLine = in.readLine();
-            IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
-            writing = true;
+            char firstChar = inputLine.charAt(0);
 
+            if (firstChar == 'V') {
+                IntercomSystem.incomingVisitor = inputLine.substring(4);
+            } else {
+                IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
+            }
+
+            awaitResponse();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-    public void sendText(String text) {
-        out.println(name + ": " + text);
-        writing = false;
+    public void sendText(String text, MessageType type) {
+        switch (type) {
+            case CHAT:
+                out.println(name + ": " + text);
+                break;
+            case VISIT:
+                out.println("V - " + text);
+                break;
+            case EMERGENCY:
+                out.println(text);
+                break;
+        }
     }
 }
