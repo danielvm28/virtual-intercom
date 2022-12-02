@@ -81,14 +81,14 @@ public class ApartmentController implements Initializable {
     public void visitor(){
         new Thread(() -> {
             Platform.runLater(() ->{
-                String x = IntercomSystem.incomingVisitor;
+                String x = ""+IntercomSystem.incomingVisitor;
                 IntercomSystem.incomingVisitor="";
                 Alert alert;
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Visitante");
                 alert.setHeaderText("");
-                alert.setContentText("La persona "+x+" desea entrar, si desea que la persona ingrese presione OK");
-                if (x!=""){
+                alert.setContentText("La persona "+x+" desea entrar, si desea que la persona ingrese presione Aceptar");
+                if (!x.equals("")){
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK){
                         intercomSystem.determineVisitorDecision(true, rs);
