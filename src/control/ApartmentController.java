@@ -144,6 +144,7 @@ public class ApartmentController implements Initializable {
             alert.setTitle("Sin contacto de emergencia");
             alert.setHeaderText("Correo");
             alert.setContentText("No tenemos registrado ningun correo de emergencia");
+            alert.show();
 
         } else{
             alert = new Alert(Alert.AlertType.WARNING);
@@ -151,8 +152,9 @@ public class ApartmentController implements Initializable {
             alert.setHeaderText("Correo");
             alert.setContentText("Se envio un correo de emergencia a esta direccion: "+rs.getEmergencyContact());
             intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
+            alert.show();
         }
-        alert.show();
+
     }
 
     @FXML

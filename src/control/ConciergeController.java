@@ -97,9 +97,7 @@ public class ConciergeController implements Initializable {
             alert.setContentText("Se enviara una alerta de que "+x+" desea ir hacia el apartamento "+apt);
             IntercomSystem.incomingVisitor=x;
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
-                intercomSystem.announceVisitor(textFieldNombreVisitante.getText(), concierge, apt);
-            }
+            intercomSystem.announceVisitor(x, concierge, apt);
 
         } else {
             alert = new Alert(Alert.AlertType.WARNING);
