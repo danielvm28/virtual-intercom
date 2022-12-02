@@ -60,6 +60,7 @@ public class ConciergeController {
             alert.setHeaderText("Visitante");
             alert.setContentText("Recuerde que se debe informar el nombre de la persona que desea entrar");
         }
+        alert.show();
     }
 
 }

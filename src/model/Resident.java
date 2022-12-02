@@ -26,6 +26,7 @@ public class Resident {
         this.portReceive = portReceive;
         this.writing = writing;
         this.name = name;
+        emergencyContact = "";
     }
 
     public boolean isWriting() {
@@ -61,6 +62,7 @@ public class Resident {
     }
 
     public void connectWithConcierge() {
+
 
         // Find the server using UDP broadcast
         try {
