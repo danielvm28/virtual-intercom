@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import model.IntercomSystem;
 import model.Resident;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,16 +27,25 @@ public class ApartmentController implements Initializable {
     private Button buttonAPT;
 
     @FXML
+    private Button buttonCambiarContacto;
+
+    @FXML
     private Button buttonEnviar;
 
     @FXML
     private Button buttonPanico;
 
     @FXML
+    private Label labelCorreo;
+
+    @FXML
     private Label labelTurno;
 
     @FXML
     private TextArea textAreaChat;
+
+    @FXML
+    private TextField textFeildCorreo;
 
     @FXML
     private TextField textFieldMensajeEnviar;
@@ -93,9 +103,10 @@ public class ApartmentController implements Initializable {
         // Updates the new message to the controller in order for the resident to get it and send it via TCP
         if (textFieldMensajeEnviar.getText().trim().equals("")){
             alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("No se ha escrito ninguno nombre de visitante");
-            alert.setHeaderText("Visitante");
-            alert.setContentText("Recuerde que se debe informar el nombre de la persona que desea entrar");
+            alert.setTitle("No se ha escrito ninguno mensaje");
+            alert.setHeaderText("Mensaje");
+            alert.setContentText("Tiene que escribir un mensaje para continuar");
+            alert.show();
         }else {
             intercomSystem.sendText(textFieldMensajeEnviar.getText(), rs);
             textAreaChat.setText(IntercomSystem.chat);
@@ -107,7 +118,41 @@ public class ApartmentController implements Initializable {
     }
 
     @FXML
-    void panico(ActionEvent event) {
+    void panico(ActionEvent event) throws MessagingException {
+        Alert alert;
+        if(rs.getEmergencyContact().trim().equals("")){
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Sin contacto de emergencia");
+            alert.setHeaderText("Correo");
+            alert.setContentText("No tenemos registrado ningun correo de emergencia");
 
+        } else{
+            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact());
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Boton de panico");
+            alert.setHeaderText("Correo");
+            alert.setContentText("Se envio un correo de emergencia a esta direccion: "+rs.getEmergencyContact());
+        }
+        alert.show();
+    }
+
+    @FXML
+    void CambiarContacto(ActionEvent event) {
+        Alert alert;
+        if(textFeildCorreo.getText().trim().equals("")){
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Sin contacto de emergencia");
+            alert.setHeaderText("Correo");
+            alert.setContentText("No se escribio ningun contacto de emergencia");
+        } else {
+            rs.setEmergencyContact(textFeildCorreo.getText());
+            labelCorreo.setText(rs.getEmergencyContact());
+            textFeildCorreo.setText("");
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cambio contacto de emergencia");
+            alert.setHeaderText("Contacto de emergencia");
+            alert.setContentText("Se cambio el contacto de emergencia a: "+rs.getEmergencyContact());
+        }
+        alert.show();
     }
 }

@@ -23,6 +23,7 @@ public class Resident {
         this.port = port;
         this.writing = writing;
         this.name = name;
+        emergencyContact = "";
     }
 
     public boolean isWriting() {
@@ -59,15 +60,6 @@ public class Resident {
 
     public void connectWithConcierge() {
 
-        intercomSystem = IntercomSystem.getInstance();
-
-        try {
-            echoSocket = new Socket(intercomSystem.getServerIP(), port);
-            out = new PrintWriter(echoSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         // Find the server using UDP broadcast
         try {
@@ -131,6 +123,17 @@ public class Resident {
 
             //Close the port!
             c.close();
+
+            intercomSystem = IntercomSystem.getInstance();
+
+            try {
+                echoSocket = new Socket(intercomSystem.getServerIP(), port);
+                out = new PrintWriter(echoSocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(Resident.class.getName()).log(Level.SEVERE, null, ex);
         }
