@@ -68,6 +68,14 @@ public class IntercomSystem {
         chat = chat + "\n" + r.getName() + ": " + text;
     }
 
+    public void determineVisitorDecision(boolean admitted, Resident r) {
+        r.sendText(admitted ? "Y" : "N", MessageType.VISIT);
+    }
+
+    public void announceVisitor(String visitor, Concierge c, String apartment) {
+        c.sendVisitAlert(apartment, visitor);
+    }
+
     public void sendEmergencyEmail(String name, String contact, Resident r) throws MessagingException {
         r.sendText("Emergencia", MessageType.EMERGENCY);
         EmailSenderService emailSenderService = new EmailSenderService();
