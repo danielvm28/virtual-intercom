@@ -64,9 +64,9 @@ public class ApartmentController implements Initializable {
 
         // Start the window differently depending on the apartment
         if (rs.getName().equals("A01")){
-            buttonAPT.setText("A02");
-        } else{
             buttonAPT.setText("A01");
+        } else{
+            buttonAPT.setText("A02");
         }
 
         new Thread(() -> {
@@ -151,8 +151,8 @@ public class ApartmentController implements Initializable {
             alert.setTitle("Boton de panico");
             alert.setHeaderText("Correo");
             alert.setContentText("Se envio un correo de emergencia a esta direccion: "+rs.getEmergencyContact());
-            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
             alert.show();
+            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
         }
 
     }
