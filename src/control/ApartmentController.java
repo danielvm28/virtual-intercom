@@ -22,6 +22,8 @@ public class ApartmentController implements Initializable {
     public ApartmentController(Resident rs) throws IOException {
         intercomSystem = IntercomSystem.getInstance();
         this.rs = rs;
+
+        // Begins connecting the resident with the concierge
         rs.connectWithConcierge();
     }
 
@@ -75,6 +77,8 @@ public class ApartmentController implements Initializable {
 
         // Update the chat consistently
         updateChat();
+
+        // Method to check indefinitely if a new visitor is coming
         visitor();
     }
 
@@ -105,7 +109,7 @@ public class ApartmentController implements Initializable {
     public void updateChat() {
         new Thread(()-> {
 
-            // Update the chat
+            // Update the chat in the main thread
             Platform.runLater(() -> {
                 if (actChat.length() != IntercomSystem.chat.length()) {
                     actChat = IntercomSystem.chat;
@@ -138,6 +142,8 @@ public class ApartmentController implements Initializable {
 
     @FXML
     void panico(ActionEvent event) throws MessagingException {
+
+        // Triggers an alert to the concierge and also sends an email to the address marked as emergency contact
         Alert alert;
         if(rs.getEmergencyContact().trim().equals("")){
             alert = new Alert(Alert.AlertType.WARNING);
@@ -159,6 +165,8 @@ public class ApartmentController implements Initializable {
 
     @FXML
     void CambiarContacto(ActionEvent event) {
+
+        // Sets the emergency contact for the resident
         Alert alert;
         if(textFeildCorreo.getText().trim().equals("")){
             alert = new Alert(Alert.AlertType.WARNING);

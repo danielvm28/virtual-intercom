@@ -35,8 +35,11 @@ public class ConciergeController implements Initializable {
 
     public ConciergeController(Concierge concierge) {
         this.concierge = concierge;
+
+        // Starts the discovery from the server side
         new Thread(new DiscoveryThread()).start();
-        //new Thread(concierge::hostChat).start();
+
+        // Initializes the hosting of the responses and sockets
         new Thread(concierge::ini).start();
         intercomSystem=IntercomSystem.getInstance();
     }
@@ -47,6 +50,9 @@ public class ConciergeController implements Initializable {
         responseVis();
     }
 
+    /**
+     * Waits for a response from the resident side for accepting or rejecting an incoming visitor
+     */
     public void responseVis(){
         new Thread(() -> {
             Platform.runLater(() ->{
@@ -65,6 +71,9 @@ public class ConciergeController implements Initializable {
         }).start();
     }
 
+    /**
+     * Waits for a response from the resident side for an emergency
+     */
     public void checkEmergency(){
         new Thread(() -> {
             Platform.runLater(() ->{
@@ -83,6 +92,10 @@ public class ConciergeController implements Initializable {
         }).start();
     }
 
+    /**
+     * Sends an alert of an incoming visitor to the respective apartment
+     * @param event
+     */
     @FXML
     void alert(ActionEvent event) {
         Button b = (Button) event.getSource();

@@ -17,6 +17,9 @@ public class EmailSenderService {
 
     private Session session;
 
+    /**
+     * Initializes all the parameters in order for the email to work
+     */
     private void init() {
 
         properties.put("mail.smtp.host", "smtp.gmail.com");
@@ -28,6 +31,13 @@ public class EmailSenderService {
         session = Session.getDefaultInstance(properties);
     }
 
+    /**
+     * Sends an email with an specified subject, text and receiver
+     * @param subject
+     * @param text
+     * @param receiver
+     * @throws MessagingException
+     */
     public void sendEmail(String subject, String text, String receiver) throws MessagingException{
 
         init();

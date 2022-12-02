@@ -23,6 +23,9 @@ public class DiscoveryThread implements Runnable {
     }
     private DatagramSocket socket;
 
+    /**
+     * Opens a socket that listens to UDP requests on the port 8888, checks if the response from server side is valid, and if it is, send a response with the server IP to that address
+     */
     @Override
     public void run() {
         try {

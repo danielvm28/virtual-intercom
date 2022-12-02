@@ -36,7 +36,6 @@ public class IntercomSystem {
 
     public void setServerIP(String serverIP) {
         this.serverIP = serverIP;
-        System.out.println(serverIP);
     }
 
     public Resident getResident1() {
@@ -63,19 +62,42 @@ public class IntercomSystem {
         this.concierge = concierge;
     }
 
+    /**
+     * Sends a text message to the server
+     * @param text
+     * @param r
+     */
     public void sendText(String text, Resident r) {
         r.sendText(text, MessageType.CHAT);
         chat = chat + "\n" + r.getName() + ": " + text;
     }
 
+    /**
+     * Sends a decision to the concierge in respect of the incoming visitor
+     * @param admitted
+     * @param r
+     */
     public void determineVisitorDecision(boolean admitted, Resident r) {
         r.sendText(admitted ? "Y" : "N", MessageType.VISIT);
     }
 
+    /**
+     * Announces a visitor from the server side (Concierge)
+     * @param visitor
+     * @param c
+     * @param apartment
+     */
     public void announceVisitor(String visitor, Concierge c, String apartment) {
         c.sendVisitAlert(apartment, visitor);
     }
 
+    /**
+     * Sends an emergency email to the specified emergency contact from a certain resident
+     * @param name
+     * @param contact
+     * @param r
+     * @throws MessagingException
+     */
     public void sendEmergencyEmail(String name, String contact, Resident r) throws MessagingException {
         r.sendText("Emergencia", MessageType.EMERGENCY);
         EmailSenderService emailSenderService = new EmailSenderService();

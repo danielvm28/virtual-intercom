@@ -22,6 +22,40 @@ public class Concierge {
     private PrintWriter out2;
     private BufferedReader in2;
 
+    /**
+     * Initializes all the server and client sockets to start the threads to await responses
+     */
+    public void ini() {
+        try {
+            serverSocketReceive1 = new ServerSocket(8880);
+            serverSocketSend1 = new ServerSocket(8881);
+            clientSocketReceive1 = serverSocketReceive1.accept();
+            clientSocketSend1 = serverSocketSend1.accept();
+
+            serverSocketReceive2 = new ServerSocket(8882);
+            serverSocketSend2 = new ServerSocket(8883);
+            clientSocketReceive2 = serverSocketReceive2.accept();
+            clientSocketSend2 = serverSocketSend2.accept();
+
+            out = new PrintWriter(clientSocketSend1.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocketReceive1.getInputStream()));
+
+            out2 = new PrintWriter(clientSocketSend2.getOutputStream(), true);
+            in2 = new BufferedReader(new InputStreamReader(clientSocketReceive2.getInputStream()));
+
+            // Start a thread to await responses for resident 1
+            new Thread(this::hostResponsesR1).start();
+            // Start a thread to await responses for resident 2
+            new Thread(this::hostResponsesR2).start();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Hosts all the responses directed to the resident 1, who opened sockets in the ports 8880 and 8881 for receiving and sending packets respectively
+     */
     public void hostResponsesR1() {
         try {
             String inputLine;
@@ -44,6 +78,9 @@ public class Concierge {
         }
     }
 
+    /**
+     * Hosts all the responses directed to the resident 2, who opened sockets in the ports 8882 and 8883 for receiving and sending packets respectively
+     */
     public void hostResponsesR2() {
         try {
             String inputLine;
@@ -66,31 +103,11 @@ public class Concierge {
         }
     }
 
-    public void ini() {
-        try {
-            serverSocketReceive1 = new ServerSocket(8880);
-            serverSocketSend1 = new ServerSocket(8881);
-            clientSocketReceive1 = serverSocketReceive1.accept();
-            clientSocketSend1 = serverSocketSend1.accept();
-
-            serverSocketReceive2 = new ServerSocket(8882);
-            serverSocketSend2 = new ServerSocket(8883);
-            clientSocketReceive2 = serverSocketReceive2.accept();
-            clientSocketSend2 = serverSocketSend2.accept();
-
-            out = new PrintWriter(clientSocketSend1.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocketReceive1.getInputStream()));
-
-            out2 = new PrintWriter(clientSocketSend2.getOutputStream(), true);
-            in2 = new BufferedReader(new InputStreamReader(clientSocketReceive2.getInputStream()));
-
-            new Thread(this::hostResponsesR1).start();
-            new Thread(this::hostResponsesR2).start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    /**
+     * Sends an alert of new visitor to the respective apartment with the name of the visitor
+     * @param apartment
+     * @param visitor
+     */
     public void sendVisitAlert(String apartment, String visitor) {
         if (apartment.equals("A01")) {
             out.println("V - " + visitor);
@@ -98,55 +115,4 @@ public class Concierge {
             out2.println("V - " + visitor);
         }
     }
-
-//    public void hostChat() {
-//        try (
-//                ServerSocket serverSocket = new ServerSocket(8880);
-//                ServerSocket serverSocket2 = new ServerSocket(8881);
-//                Socket clientSocket = serverSocket.accept();
-//                Socket clientSocket2 = serverSocket2.accept();
-//
-//                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-//                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//
-//                PrintWriter out2 = new PrintWriter(clientSocket2.getOutputStream(), true);
-//                BufferedReader in2 = new BufferedReader(new InputStreamReader(clientSocket2.getInputStream()))
-//        ) {
-//
-//            String inputLine;
-//            boolean closeChat1 = false;
-//            boolean closeChat2 = false;
-//
-//            while (true) {
-//                if (writing1) {
-//                    inputLine = in.readLine();
-//
-//                    // Closes the chat if both parts agree
-//                    if (inputLine != null && inputLine.equalsIgnoreCase("close")) {
-//                        closeChat1 = true;
-//                        if (closeChat2) {
-//                            break;
-//                        }
-//                    }
-//                    out2.println(inputLine);
-//                    writing1 = false;
-//                } else {
-//                    inputLine = in2.readLine();
-//
-//                    // Closes the chat if both parts agree
-//                    if (inputLine != null && inputLine.equalsIgnoreCase("close")) {
-//                        closeChat2 = true;
-//                        if (closeChat1) {
-//                            break;
-//                        }
-//                    }
-//                    out.println(inputLine);
-//                    writing1 = true;
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }

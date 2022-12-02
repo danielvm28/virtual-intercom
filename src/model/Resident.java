@@ -51,6 +51,10 @@ public class Resident {
         this.emergencyContact = emergencyContact;
     }
 
+    /**
+     * Broadcasts to the default address: 255.255.255.255 and port 8888, loops over all network interfaces and sends UDP packet inside the loop.
+     * Waits for a reply and if the package is valid, store the server IP address and close the socket.
+     */
     public void connectWithConcierge() {
 
 
@@ -134,6 +138,9 @@ public class Resident {
 
     }
 
+    /**
+     * Waits for a response of visit type or new chat message
+     */
     public void awaitResponse() {
         try {
             String inputLine;
@@ -152,6 +159,11 @@ public class Resident {
         }
     }
 
+    /**
+     * Sends a message to the server (Concierge) depending on the type of message
+     * @param text
+     * @param type
+     */
     public void sendText(String text, MessageType type) {
         switch (type) {
             case CHAT:
