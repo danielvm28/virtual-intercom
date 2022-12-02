@@ -14,8 +14,8 @@ public class IntercomSystem {
     public static String chat = "";
 
     private IntercomSystem() {
-        resident1 = new Resident(false, "A01", 8880);
-        resident2 = new Resident(true, "A02", 8881);
+        resident1 = new Resident(false, "A01", 8880, 8881);
+        resident2 = new Resident(true, "A02", 8882, 8883);
         concierge = new Concierge();
     }
 

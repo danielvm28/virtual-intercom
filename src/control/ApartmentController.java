@@ -49,13 +49,14 @@ public class ApartmentController implements Initializable {
         // Start the window differently depending on the apartment
         if (rs.getName().equals("A01")){
             buttonAPT.setText("A02");
-            new Thread(() -> {
-                rs.awaitResponse();
-            }).start();
             buttonEnviar.setDisable(true);
         } else{
             buttonAPT.setText("A01");
         }
+
+        new Thread(() -> {
+            rs.awaitResponse();
+        }).start();
 
         // Update the chat consistently
         updateChat();
@@ -100,9 +101,6 @@ public class ApartmentController implements Initializable {
             intercomSystem.sendText(textFieldMensajeEnviar.getText(), rs);
             textAreaChat.setText(IntercomSystem.chat);
             textFieldMensajeEnviar.clear();
-            new Thread(() -> {
-                rs.awaitResponse();
-            }).start();
         }
     }
 

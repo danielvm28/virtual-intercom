@@ -12,15 +12,18 @@ import java.util.logging.Logger;
 public class Resident {
     private boolean writing;
     private String name;
-    private int port;
+    private int portSend;
+    private int portReceive;
     private String emergencyContact;
     private IntercomSystem intercomSystem;
     private Socket echoSocket;
+    private Socket receptionSocket;
     private PrintWriter out;
     private BufferedReader in;
 
-    public Resident(boolean writing, String name, int port)  {
-        this.port = port;
+    public Resident(boolean writing, String name, int portSend, int portReceive)  {
+        this.portSend = portSend;
+        this.portReceive = portReceive;
         this.writing = writing;
         this.name = name;
     }
@@ -41,12 +44,12 @@ public class Resident {
         this.name = name;
     }
 
-    public int getPort() {
-        return port;
+    public int getPortSend() {
+        return portSend;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setPortSend(int portSend) {
+        this.portSend = portSend;
     }
 
     public String getEmergencyContact() {
@@ -58,16 +61,6 @@ public class Resident {
     }
 
     public void connectWithConcierge() {
-
-        intercomSystem = IntercomSystem.getInstance();
-
-        try {
-            echoSocket = new Socket(intercomSystem.getServerIP(), port);
-            out = new PrintWriter(echoSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         // Find the server using UDP broadcast
         try {
@@ -131,6 +124,18 @@ public class Resident {
 
             //Close the port!
             c.close();
+
+            intercomSystem = IntercomSystem.getInstance();
+
+            try {
+                echoSocket = new Socket(intercomSystem.getServerIP(), portSend);
+                receptionSocket = new Socket(intercomSystem.getServerIP(), portReceive);
+                out = new PrintWriter(echoSocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(receptionSocket.getInputStream()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         } catch (IOException ex) {
             Logger.getLogger(Resident.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -143,6 +148,8 @@ public class Resident {
             inputLine = in.readLine();
             IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
             writing = true;
+
+            awaitResponse();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
