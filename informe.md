@@ -20,7 +20,7 @@ de asignar una clase independiente que se encarga de conectar el modelo con las 
 se empleó JavaFX, se necesitó de cuatro (4) pantallas, una para seleccionar si es el apartamento "A01", "A02" 0 "Portería", otra para cada apartamento 
 y una para el control de la Portería.
  
-## Dificulatades
+## Dificultades
 
 Se encontró dificultad en el chat. Esto fue causado por el código de TCP en donde se utiliza el mismo puerto tanto para escuchar como para enviar, lo que no permite lograr
 el correcto funcionamiento. Otro lugar donde se encontraron difucultades fue para enviar una alerta de visitante a los apartamentos. Este problema se presentaba 
