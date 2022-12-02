@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import model.IntercomSystem;
 import model.Resident;
 
@@ -39,9 +40,6 @@ public class ApartmentController implements Initializable {
     private Label labelCorreo;
 
     @FXML
-    private Label labelTurno;
-
-    @FXML
     private TextArea textAreaChat;
 
     @FXML
@@ -56,16 +54,22 @@ public class ApartmentController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         actChat = "";
 
+        textFieldMensajeEnviar.setOnKeyPressed(event -> {
+            if (event.getCode()== KeyCode.ENTER){
+                buttonEnviar.fire();
+            }
+        });
+
         // Start the window differently depending on the apartment
         if (rs.getName().equals("A01")){
             buttonAPT.setText("A02");
-            new Thread(() -> {
-                rs.awaitResponse();
-            }).start();
-            buttonEnviar.setDisable(true);
         } else{
             buttonAPT.setText("A01");
         }
+
+        new Thread(() -> {
+            rs.awaitResponse();
+        }).start();
 
         // Update the chat consistently
         updateChat();
@@ -76,15 +80,6 @@ public class ApartmentController implements Initializable {
 
             // Update the chat
             Platform.runLater(() -> {
-                // Set the label text and send button according to the resident's turn
-                if (rs.isWriting()) {
-                    labelTurno.setText("Escribir");
-                    buttonEnviar.setDisable(false);
-                } else {
-                    labelTurno.setText("Esperar");
-                    buttonEnviar.setDisable(true);
-                }
-
                 if (actChat.length() != IntercomSystem.chat.length()) {
                     actChat = IntercomSystem.chat;
                     textAreaChat.setText(actChat);
@@ -111,9 +106,6 @@ public class ApartmentController implements Initializable {
             intercomSystem.sendText(textFieldMensajeEnviar.getText(), rs);
             textAreaChat.setText(IntercomSystem.chat);
             textFieldMensajeEnviar.clear();
-            new Thread(() -> {
-                rs.awaitResponse();
-            }).start();
         }
     }
 
@@ -127,7 +119,7 @@ public class ApartmentController implements Initializable {
             alert.setContentText("No tenemos registrado ningun correo de emergencia");
 
         } else{
-            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact());
+            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
             alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Boton de panico");
             alert.setHeaderText("Correo");

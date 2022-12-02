@@ -1,17 +1,24 @@
 package control;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import model.Concierge;
+import model.IntercomSystem;
 import util.DiscoveryThread;
 
+import java.net.URL;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
-public class ConciergeController {
+public class ConciergeController implements Initializable {
+
+    private IntercomSystem intercomSystem;
 
     @FXML
     private Button buttonA01;
@@ -29,7 +36,31 @@ public class ConciergeController {
     public ConciergeController(Concierge concierge) {
         this.concierge = concierge;
         new Thread(new DiscoveryThread()).start();
-        new Thread(concierge::hostChat).start();
+        //new Thread(concierge::hostChat).start();
+        new Thread(concierge::ini).start();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        checkEmergency();
+    }
+
+    public void checkEmergency(){
+        new Thread(() -> {
+            Platform.runLater(() ->{
+                int x = IntercomSystem.emergency;
+                if (x==1 || x==2){
+                    Alert alert;
+                    alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Emergencia");
+                    alert.setHeaderText("");
+                    alert.setContentText("El apartamento A0"+x+" se encuentra en una emergencia");
+                    IntercomSystem.emergency=0;
+                    Optional<ButtonType> result = alert.showAndWait();
+                }
+            });
+            checkEmergency();
+        }).start();
     }
 
     @FXML
