@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import model.IntercomSystem;
 import model.Resident;
 
@@ -39,9 +40,6 @@ public class ApartmentController implements Initializable {
     private Label labelCorreo;
 
     @FXML
-    private Label labelTurno;
-
-    @FXML
     private TextArea textAreaChat;
 
     @FXML
@@ -55,6 +53,12 @@ public class ApartmentController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         actChat = "";
+
+        textFieldMensajeEnviar.setOnKeyPressed(event -> {
+            if (event.getCode()== KeyCode.ENTER){
+                buttonEnviar.fire();
+            }
+        });
 
         // Start the window differently depending on the apartment
         if (rs.getName().equals("A01")){
