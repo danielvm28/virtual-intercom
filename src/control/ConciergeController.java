@@ -38,11 +38,31 @@ public class ConciergeController implements Initializable {
         new Thread(new DiscoveryThread()).start();
         //new Thread(concierge::hostChat).start();
         new Thread(concierge::ini).start();
+        intercomSystem=IntercomSystem.getInstance();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkEmergency();
+        responseVis();
+    }
+
+    public void responseVis(){
+        new Thread(() -> {
+            Platform.runLater(() ->{
+                String x=IntercomSystem.visitDecision;
+                IntercomSystem.visitDecision="";
+                if (!x.equals("")){
+                    Alert alert;
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Respuesta de visita");
+                    alert.setHeaderText("");
+                    alert.setContentText("Y=Puede entrar/N=No puede entrar"+"\n"+"Respuesta= "+x);
+                    alert.show();
+                }
+            });
+            responseVis();
+        }).start();
     }
 
     public void checkEmergency(){
@@ -68,29 +88,27 @@ public class ConciergeController implements Initializable {
         Button b = (Button) event.getSource();
         String apt = b.getText();
         Alert alert;
-        if (!textFieldNombreVisitante.getText().isEmpty()){
+        if (!textFieldNombreVisitante.getText().isEmpty() || !textFieldNombreVisitante.getText().equals("")){
+            String x = textFieldNombreVisitante.getText();
+            textFieldNombreVisitante.setText("");
             alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Alerta de ingreso");
             alert.setHeaderText("");
-            alert.setContentText("Se enviara una alerta de que"+textFieldNombreVisitante.getText()+"desea ir hacia el apartamento "+apt);
+            alert.setContentText("Se enviara una alerta de que "+x+" desea ir hacia el apartamento "+apt);
+            IntercomSystem.incomingVisitor=x;
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){
-                //mandar alerta de ingreso
-                if (apt.equals("A01")){
-                    //ENVIAR ALERTA A A01
-                } else {
-                    //ENVIAR ALERTA A A02
-                }
-                //Se borra el nombre
-                textFieldNombreVisitante.setText("");
+                intercomSystem.announceVisitor(textFieldNombreVisitante.getText(), concierge, apt);
             }
+
         } else {
             alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No se ha escrito ninguno nombre de visitante");
             alert.setHeaderText("Visitante");
             alert.setContentText("Recuerde que se debe informar el nombre de la persona que desea entrar");
+            alert.show();
         }
-        alert.show();
+
     }
 
 }
