@@ -11,6 +11,7 @@ import model.Resident;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ApartmentController implements Initializable {
@@ -52,6 +53,7 @@ public class ApartmentController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         actChat = "";
 
         textFieldMensajeEnviar.setOnKeyPressed(event -> {
@@ -73,6 +75,34 @@ public class ApartmentController implements Initializable {
 
         // Update the chat consistently
         updateChat();
+        visitor();
+    }
+
+    public void visitor(){
+        new Thread(() -> {
+            Platform.runLater(() ->{
+                String x = IntercomSystem.incomingVisitor;
+                IntercomSystem.incomingVisitor="";
+                Alert alert;
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Visitante");
+                alert.setHeaderText("");
+                alert.setContentText("La persona "+x+" desea entrar, si desea que la persona ingrese presione OK");
+                if (x!=""){
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        intercomSystem.determineVisitorDecision(true, rs);
+                        System.out.println("Entra en aceptar");
+                    } else {
+                        intercomSystem.determineVisitorDecision(false, rs);
+                    }
+                    System.out.println("NOOOOOOOOOOOOOOOOOOO Entra en aceptar");
+
+                }
+
+            });
+            visitor();
+        }).start();
     }
 
     public void updateChat() {
@@ -119,11 +149,11 @@ public class ApartmentController implements Initializable {
             alert.setContentText("No tenemos registrado ningun correo de emergencia");
 
         } else{
-            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
             alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Boton de panico");
             alert.setHeaderText("Correo");
             alert.setContentText("Se envio un correo de emergencia a esta direccion: "+rs.getEmergencyContact());
+            intercomSystem.sendEmergencyEmail(rs.getName(), rs.getEmergencyContact(), rs);
         }
         alert.show();
     }
