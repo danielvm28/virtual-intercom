@@ -12,10 +12,13 @@ public class IntercomSystem {
     private Concierge concierge;
 
     public static String chat = "";
+    public static int emergency = 0;
+    public static String incomingVisitor = "";
+    public static String visitDecision = "";
 
     private IntercomSystem() {
-        resident1 = new Resident(false, "A01", 8880, 8881);
-        resident2 = new Resident(true, "A02", 8882, 8883);
+        resident1 = new Resident("A01", 8880, 8881);
+        resident2 = new Resident( "A02", 8882, 8883);
         concierge = new Concierge();
     }
 
@@ -61,11 +64,12 @@ public class IntercomSystem {
     }
 
     public void sendText(String text, Resident r) {
-        r.sendText(text);
+        r.sendText(text, MessageType.CHAT);
         chat = chat + "\n" + r.getName() + ": " + text;
     }
 
-    public void sendEmergencyEmail(String name, String contact) throws MessagingException {
+    public void sendEmergencyEmail(String name, String contact, Resident r) throws MessagingException {
+        r.sendText("Emergencia", MessageType.EMERGENCY);
         EmailSenderService emailSenderService = new EmailSenderService();
         emailSenderService.sendEmail("EMERGENCIA", "Ha ocurrido una emergencia en el apartamento " + name + ". \nY usted aparece como contacto de emergencia", contact);
     }

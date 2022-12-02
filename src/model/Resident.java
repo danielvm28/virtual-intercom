@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Resident {
-    private boolean writing;
     private String name;
     private int portSend;
     private int portReceive;
@@ -21,20 +20,11 @@ public class Resident {
     private PrintWriter out;
     private BufferedReader in;
 
-    public Resident(boolean writing, String name, int portSend, int portReceive)  {
+    public Resident(String name, int portSend, int portReceive)  {
         this.portSend = portSend;
         this.portReceive = portReceive;
-        this.writing = writing;
         this.name = name;
         emergencyContact = "";
-    }
-
-    public boolean isWriting() {
-        return writing;
-    }
-
-    public void setWriting(boolean writing) {
-        this.writing = writing;
     }
 
     public String getName() {
@@ -148,19 +138,31 @@ public class Resident {
         try {
             String inputLine;
             inputLine = in.readLine();
-            IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
-            writing = true;
+            char firstChar = inputLine.charAt(0);
+
+            if (firstChar == 'V') {
+                IntercomSystem.incomingVisitor = inputLine.substring(4);
+            } else {
+                IntercomSystem.chat = (IntercomSystem.chat + "\n" + inputLine);
+            }
 
             awaitResponse();
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-    public void sendText(String text) {
-        out.println(name + ": " + text);
-        writing = false;
+    public void sendText(String text, MessageType type) {
+        switch (type) {
+            case CHAT:
+                out.println(name + ": " + text);
+                break;
+            case VISIT:
+                out.println("V - " + text);
+                break;
+            case EMERGENCY:
+                out.println(text);
+                break;
+        }
     }
 }
